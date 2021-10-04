@@ -1,14 +1,12 @@
 coffee_machine = {'water': 400, 'milk': 540, 'coffee': 120, 'cups': 9, 'money': 550}
-A = dict(buy='What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:',
-         fill='fill',
-         take='take')
+A = dict(buy='What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino, back - to main menu: ',
+         fill='fill', take='take', remaining='remaining', exit='exit')
+B = {0: 'Sorry, not enough water', 1: 'Sorry, not enough coffee beans', 2: 'Sorry, not enough cups', 3: 'Sorry, not enough milk'}
 
 
 def take():
     print(f'I gave you ${coffee_machine["money"]}')
     coffee_machine["money"] = 0
-
-    menu()
 
 
 def fill():
@@ -21,18 +19,46 @@ def fill():
     print("Write how many disposable cups of coffee do you want to add:")
     coffee_machine['cups'] += int(input())
 
-    menu()
+
+def check_espresso():
+    check = coffee_machine.copy()
+    test = [check['water'] >= 250, check['coffee'] >= 16, check['cups'] >= 1]
+    if all(test):
+        espresso()
+    else:
+        miss = test.index(False)
+        print(B.get(miss))
+
+
+def check_late():
+    check = coffee_machine.copy()
+    test = [check['water'] >= 350, check['coffee'] >= 20, check['cups'] >= 1, check['milk'] >= 75]
+    if all(test):
+        latte()
+    else:
+        miss = test.index(False)
+        print(B.get(miss))
+
+
+def check_cappuccino():
+    check = coffee_machine.copy()
+    test = [check['water'] >= 200, check['coffee'] >= 12, check['cups'] >= 1, check['milk'] >= 100]
+    if all(test):
+        cappuccino()
+    else:
+        miss = test.index(False)
+        print(B.get(miss))
 
 
 def buy(choose):
-    if choose == 1:
-        espresso()
-    elif choose == 2:
-        latte()
-    elif choose == 3:
-        cappuccino()
+    if choose == '1':
+        check_espresso()
+    elif choose == '2':
+        check_late()
+    elif choose == '3':
+        check_cappuccino()
     else:
-        print("Wrong answer")
+        pass
 
 
 def espresso():
@@ -40,8 +66,6 @@ def espresso():
     coffee_machine['coffee'] -= 16
     coffee_machine['money'] += 4
     coffee_machine['cups'] -= 1
-
-    menu()
 
 
 def latte():
@@ -51,8 +75,6 @@ def latte():
     coffee_machine['money'] += 7
     coffee_machine['cups'] -= 1
 
-    menu()
-
 
 def cappuccino():
     coffee_machine['water'] -= 200
@@ -60,8 +82,6 @@ def cappuccino():
     coffee_machine['coffee'] -= 12
     coffee_machine['money'] += 6
     coffee_machine['cups'] -= 1
-
-    menu()
 
 
 def menu():
@@ -74,15 +94,19 @@ def menu():
     {coffee_machine['money']} of money
 ''')
 
-menu()
 
-action = input("write action (buy, fill, take):").lower()
-print(A[action])
-
-if action == "fill":
-    fill()
-elif action == "take":
-    take()
-elif action == "buy":
-    user_action = int(input())
-    buy(user_action)
+while True:
+    action = input("Write action (buy, fill, take, remaining, exit):").lower()
+    print(A[action])
+    if action == "fill":
+        fill()
+    elif action == "take":
+        take()
+    elif action == "buy":
+        user_action = input()
+        buy(user_action)
+    elif action == 'exit':
+        break
+    elif action == 'remaining':
+        menu()
+        
